@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ExcelAddIn.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="VisitsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ведомость посещений</Value>
+    </Setting>
+    <Setting Name="BirthdayFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">база др</Value>
+    </Setting>
+    <Setting Name="InterestsFileName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">интересы посетителей</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

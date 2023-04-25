@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load" loadImage="GetImage">
+	<ribbon>
+		<tabs>
+			<tab idMso="TabAddIns" label="Инструменты для ЦМД">
+				<group id="groupVisits" label="Ведомость посещений">
+					<button
+						id="buttonVisitsAddCurTime"
+						onAction="VisitsAddCurTime"
+						label="Подставить текущее время"
+						size="large"
+						image="Image1"
+						getEnabled="GetVisitsEnabled"/>
+					<button
+						id="buttonVisitsEntryAutocomplete"
+						onAction="VisitsEntryAutocomplete"
+						label="Ручное автозаполнение"
+						size="large"
+						image="Image2"
+						getEnabled="GetVisitsEnabled"/>
+					<button
+						id="buttonVisitsAddNewEntry"
+						onAction="VisitsAddNewEntry"
+						label="Добавить новую запись"
+						size="large"
+						image="Image6"
+						getEnabled="GetVisitsEnabled"/>
+					<button
+						id="buttonVisitsToLastEntry"
+						onAction="VisitsToLastEntry"
+						label="К последней записи"
+						size="large"
+						image="Image4"
+						getEnabled="GetVisitsEnabled"/>
+					<button
+						id="buttonVisitsAddToBirthday"
+						onAction="VisitsAddToBirthday"
+						label="Добавить в дни рождения"
+						size="large"
+						image="Image5"
+						getEnabled="GetVisitsEnabled"/>
+				</group>
+
+				<group id="groupInterests" label="Интересы посетителей">
+					<button
+						id="buttonInterestsEntryEditor"
+						onAction="InterestsEntryEditor"
+						label="Редактор записей"
+						size="large"
+						image="Image3"
+						getEnabled="GetInterestsEnabled"/>
+				</group>
+
+				<group id="groupSettings" label="Параметры надстройки">
+					<button
+						id="buttonSettingsEdit"
+						onAction="SettingsEdit"
+						label="Установки поведения надстройки"
+						size="large"
+						image="Image7"
+						enabled="true"/>
+				</group>
+
+				<group id="groupOther" label="Остальное">
+					<button
+						id="buttonMakeIdentical"
+						onAction="MakeIdentical"
+						label="Поле «Участник...» в ведомости посещений везде как в первой записи"
+						size="normal"
+						image="Image8"
+						getEnabled="GetVisitsEnabled"/>
+					<button
+						id="buttonAllSheetAutocomplete"
+						onAction="AllSheetAutocomplete"
+						label="Автозаполнение всего листа в ведомости посещений"
+						size="normal"
+						image="Image9"
+						getEnabled="GetVisitsEnabled"/>
+				</group>
+			</tab>
+		</tabs>
+	</ribbon>
+</customUI>
+
