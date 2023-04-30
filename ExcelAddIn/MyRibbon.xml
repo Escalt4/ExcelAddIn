@@ -61,20 +61,36 @@
 						enabled="true"/>
 				</group>
 
-				<group id="groupOther" label="Остальное">
+				<group id="groupVisitsAuto" label="Автозаполнение ведомости посещений">
+					<button
+						id="buttonGapsFill"
+						onAction="GapsFill"
+						label="Заполнить пропуски на всем листе"
+						size="normal"
+						getEnabled="GetVisitsEnabled"/>					
 					<button
 						id="buttonMakeIdentical"
 						onAction="MakeIdentical"
-						label="Поле «Участник...» в ведомости посещений везде как в первой записи"
+						label="Поле «Участник...» везде как в первой записи"
 						size="normal"
-						image="Image8"
-						getEnabled="GetVisitsEnabled"/>
+						getEnabled="GetVisitsEnabled"/>						
+				</group>
+				<group id="groupOther" label="Общие инструменты">
 					<button
-						id="buttonAllSheetAutocomplete"
-						onAction="AllSheetAutocomplete"
-						label="Автозаполнение всего листа в ведомости посещений"
+						id="buttonRemoveExtraSpaces"
+						onAction="RemoveExtraSpaces"
+						label="Убрать лишние пробелы"
+						size="normal"/>
+					<button
+						id="buttonRemoveNewLine"
+						onAction="RemoveNewLine"
+						label="Убрать переносы в строках"
+						size="normal"/>
+					<button
+						id="buttonTyposCorrection"
+						onAction="TyposCorrection"
+						label="Исправление опечаток в выделеном столбце"
 						size="normal"
-						image="Image9"
 						getEnabled="GetVisitsEnabled"/>
 				</group>
 			</tab>

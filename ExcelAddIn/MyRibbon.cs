@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Microsoft.Office.Tools.Excel;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 // TODO:  Выполните эти шаги, чтобы активировать элемент XML ленты:
 
@@ -421,6 +422,112 @@ namespace ExcelAddIn
             WorkbookActivateHandler(null);
         }
 
+        // -
+        // Заполнить пропуски на всем листе
+        public void GapsFill(Office.IRibbonControl control)
+        {
+            return;
+
+            //Excel.Application application = Globals.ThisAddIn.Application;
+            //Excel.Workbook activeWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            //Excel.Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
+            //Range activeCell = Globals.ThisAddIn.Application.ActiveCell;
+
+            //string[] toReplace = new string[] { "нет данных", "не дала", "не дал", " ", "" };
+
+            //Dictionary<string, List<string[]>> data = new Dictionary<string, List<string[]>>();
+
+            //foreach (Excel.Workbook workbooks in application.Workbooks)
+            //{
+            //    if (workbooks.Name.IndexOf(Properties.Settings.Default.VisitsFileName, StringComparison.OrdinalIgnoreCase) < 0) continue;
+
+            //    foreach (Excel.Worksheet worksheet in workbooks.Worksheets)
+            //    {
+            //        // получить количество стобцов с заголовками 
+            //        int columnCount = MyRibbon.getColumnCount(worksheet, 1);
+            //        if (columnCount == 0) continue;
+
+            //        // получить индексы колонок по их заголовкам
+            //        int[] headersIndex = MyRibbon.getHeadersIndex(worksheet, visitsHeaders, 1);
+            //        if (headersIndex[0] == 0) continue;
+
+            //        // получить количество строк в определенной колонке
+            //        int rowCount = MyRibbon.getRowCount(worksheet, headersIndex[0]);
+            //        if (rowCount == 0) continue;
+
+            //        if (rowCount == 1) rowCount++;
+
+            //        // получаем диапазон 
+            //        object[,] curRange = worksheet.Range[worksheet.Cells[1, 1], worksheet.Cells[rowCount, headersIndex.Max()]].value2;
+
+            //        for (int j = 1; j <= rowCount; j++)
+            //        {
+            //            if (curRange[j, headersIndex[0]] != null)
+            //            {
+            //                string[] qwe = new string[headersIndex.Length];
+            //                for (int i = 0; i < headersIndex.Length; i++)
+            //                {
+            //                    if (headersIndex[i] != 0 && curRange[j, headersIndex[i]] != null)
+            //                    {
+            //                        qwe[i] = curRange[j, headersIndex[i]].ToString();
+            //                    }
+            //                    else
+            //                    {
+            //                        qwe[i] = "";
+            //                    }
+            //                }
+
+            //                string key = curRange[j, headersIndex[0]].ToString();
+            //                if (data.ContainsKey(key))
+            //                {
+            //                    data[key].Add(qwe);
+            //                }
+            //                else
+            //                {
+            //                    data.Add(key, new List<string[]>());
+            //                    data[key].Add(qwe);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //// получить количество стобцов с заголовками 
+            //int columnCount = MyRibbon.getColumnCount(activeWorksheet, 1);
+            //if (columnCount == 0) return;
+
+            //// получить индексы колонок по их заголовкам
+            //int[] headersIndex = MyRibbon.getHeadersIndex(activeWorksheet, visitsHeaders, 1);
+            //if (headersIndex[0] == 0) return;
+
+            //// получить количество строк в определенной колонке
+            //int rowCount = MyRibbon.getRowCount(activeWorksheet, headersIndex[0]);
+            //if (rowCount == 0) return;
+            //if (rowCount == 1) rowCount++;
+
+            //object[,] curRange = activeWorksheet.Range[activeWorksheet.Cells[1, 1], activeWorksheet.Cells[rowCount, headersIndex.Max()]].value2;
+
+            //for (int i = 2; i <= rowCount; i++)
+            //{
+            //    if (curRange[rowCount, headersIndex[0]] != null)
+            //    {
+            //        if (data.ContainsKey(curRange[rowCount, headersIndex[0]].ToString()))
+            //        {
+            //            for (int j = 1; j < headersIndex.Length; j++)
+            //            {
+            //                if (curRange[rowCount, headersIndex[j]] == null)
+            //                {
+
+            //                }
+            //            }
+            //        }
+
+            //    }
+            //}
+
+            //return;
+        }
+
         // Сделать поле «Участник...» везде как в первой записи ведомости посещений
         public void MakeIdentical(Office.IRibbonControl control)
         {
@@ -551,13 +658,139 @@ namespace ExcelAddIn
             MessageBox.Show("Обработка завершена", "Успех!", 0, MessageBoxIcon.Asterisk);
         }
 
-        // Автозаполнение всего листа в ведомости посещений
-        public void AllSheetAutocomplete(Office.IRibbonControl control)
+        // Удалить лишние пробелы
+        public void RemoveExtraSpaces(Office.IRibbonControl control)
         {
-            //Excel.Application application = Globals.ThisAddIn.Application;
-            //Excel.Workbook activeWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
-            //Excel.Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
-            //Range activeCell = Globals.ThisAddIn.Application.ActiveCell;
+            DialogResult result = MessageBox.Show(
+                "Сейчас будет произведен поиск во всех ячейках листа с текстом и удалены лишние пробелы\n(более 2х пробелов между словами и пробелы перед и после текста)\n\nПродолжить?",
+                "Внимание!",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    Excel.Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
+
+                    // получить количество стобцов с заголовками 
+                    int columnCount = 0;
+                    for (int i = 1; i <= 10; i++)
+                    {
+                        columnCount = Math.Max(columnCount, MyRibbon.getColumnCount(activeWorksheet, i));
+                    }
+                    if (columnCount == 0) return;
+
+                    // получить количество строк 
+                    int rowCount = 0;
+                    for (int i = 1; i <= columnCount; i++)
+                    {
+                        rowCount = Math.Max(rowCount, MyRibbon.getRowCount(activeWorksheet, i));
+                    }
+                    if (rowCount == 0) return;
+
+                    if (columnCount == 1 && rowCount == 1) rowCount++;
+
+                    object[,] table = activeWorksheet.Range[activeWorksheet.Cells[1, 1], activeWorksheet.Cells[rowCount, columnCount]].value2;
+
+                    int countOfDeleted = 0;
+                    double progress = 1;
+                    for (int i = 1; i <= rowCount; i++)
+                    {
+                        for (int j = 1; j <= columnCount; j++)
+                        {
+                            if (table[i, j] is string)
+                            {
+                                string qwe = System.Text.RegularExpressions.Regex.Replace(table[i, j].ToString(), @"[ ]+", " ").Trim();
+
+                                if (table[i, j].ToString() != qwe)
+                                {
+                                    activeWorksheet.Cells[i, j].value = qwe;
+                                    countOfDeleted++;
+                                }
+                            }
+                        }
+                    }
+
+                    MessageBox.Show($"Изменено записей: {countOfDeleted}", "Успех!", 0, MessageBoxIcon.Asterisk);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Ошибка!", 0, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        // Удалить переносы строк в ячейках
+        public void RemoveNewLine(Office.IRibbonControl control)
+        {
+            DialogResult result = MessageBox.Show(
+                "Сейчас будет произведен поиск во всех ячейках листа с текстом и удалены все переносы строк в одной ячейке\n\nПродолжить?",
+                "Внимание!",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                try
+                {
+                    Excel.Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
+
+                    // получить количество стобцов с заголовками 
+                    int columnCount = MyRibbon.getColumnCount(activeWorksheet, 1);
+                    if (columnCount == 0) return;
+
+                    // получить количество строк 
+                    int rowCount = 0;
+                    for (int i = 1; i <= columnCount; i++)
+                    {
+                        rowCount = Math.Max(rowCount, MyRibbon.getRowCount(activeWorksheet, i));
+                    }
+                    if (rowCount == 0) return;
+
+                    if (columnCount == 1 && rowCount == 1) rowCount++;
+
+                    object[,] table = activeWorksheet.Range[activeWorksheet.Cells[1, 1], activeWorksheet.Cells[rowCount, columnCount]].value2;
+
+                    int countOfDeleted = 0;
+                    for (int i = 1; i <= rowCount; i++)
+                    {
+                        for (int j = 1; j <= columnCount; j++)
+                        {
+                            if (table[i, j] is string)
+                            {
+                                string qwe = System.Text.RegularExpressions.Regex.Replace(table[i, j].ToString(), @"[\n]+", "");
+
+                                if (table[i, j].ToString() != qwe)
+                                {
+                                    activeWorksheet.Cells[i, j].value = qwe;
+                                    countOfDeleted++;
+                                }
+                            }
+                        }
+                    }
+
+                    MessageBox.Show($"Изменено записей: {countOfDeleted}", "Успех!", 0, MessageBoxIcon.Asterisk);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString(), "Ошибка!", 0, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        // -
+        // Исправление опечаток в выделеном столбце
+        public void TyposCorrection(Office.IRibbonControl control)
+        {
+            Excel.Application application = Globals.ThisAddIn.Application;
+            Excel.Workbook activeWorkBook = Globals.ThisAddIn.Application.ActiveWorkbook;
+            Excel.Worksheet activeWorksheet = Globals.ThisAddIn.Application.ActiveSheet;
+            Range activeCell = Globals.ThisAddIn.Application.ActiveCell;
+
+            //new Form_TyposCorrection(application, activeWorkBook, activeWorksheet, activeCell).ShowDialog();
 
             return;
         }
